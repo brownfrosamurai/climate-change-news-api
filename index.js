@@ -77,20 +77,19 @@ const resources = [
 
 const articles = [];
 
-resources.forEach((resource) => {
-  axios.get(resource.address).then((response) => {
-    const html = response.data;
-    const $ = cheerio.load(html);
+resources.forEach(async (resource) => {
+  const response = await axios.get(resource.address);
+  const html = response.data;
+  const $ = cheerio.load(html);
 
-    $('a:contains("climate")', html).each(function () {
-      const title = $(this).text().trim();
-      const url = $(this).attr('href');
+  $('a:contains("climate")', html).each(function () {
+    const title = $(this).text().trim();
+    const url = $(this).attr('href');
 
-      articles.push({
-        title,
-        url: resource.base + url,
-        source: resource.name,
-      });
+    articles.push({
+      title,
+      url: resource.base + url,
+      source: resource.name,
     });
   });
 });
@@ -103,30 +102,31 @@ app.get('/news', async (req, res) => {
   res.status(200).json({ success: true, data: articles });
 });
 
-app.get('/news/:resourceId', async(req, res) => {
-  const resourceId = req.params.resourceId
+app.get('/news/:resourceId', async (req, res) => {
+  const resourceId = req.params.resourceId;
 
-  const resourceAddress = resources.filter(resource => resource.name == resourceId)[0].address
-  const resourceBase = resources.filter(resource => resource.name == resourceId)[0].base
+  const resourceAddress = resources.filter(
+    (resource) => resource.name == resourceId
+  )[0].address;
+  const resourceBase = resources.filter(
+    (resource) => resource.name == resourceId
+  )[0].base;
 
-  axios.get(resourceAddress)
-  .then(response => {
-      const html = response.data
-      const $ = cheerio.load(html)
-      const specificArticles = []
+  const response = await axios.get(resourceAddress);
+  const html = response.data;
+  const $ = cheerio.load(html);
+  const specificArticles = [];
 
-      $('a:contains("climate")', html).each(function () {
-          const title = $(this).text()
-          const url = $(this).attr('href')
-          specificArticles.push({
-              title,
-              url: resourceBase + url,
-              source: resourceId
-          })
-      })
-      res.json(specificArticles)
-  }).catch(err => console.log(err))
-
-})
+  $('a:contains("climate")', html).each(function () {
+    const title = $(this).text();
+    const url = $(this).attr('href');
+    specificArticles.push({
+      title,
+      url: resourceBase + url,
+      source: resourceId,
+    });
+  });
+  res.json(specificArticles);
+});
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
