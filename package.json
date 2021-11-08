@@ -1,0 +1,18 @@
+{
+  "name": "climate-change-api",
+  "version": "1.0.0",
+  "description": "climate change data",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm start",
+    "dev": "nodemon start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "meduna femi",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.10",
+    "express": "^4.17.1"
+  }
+}
